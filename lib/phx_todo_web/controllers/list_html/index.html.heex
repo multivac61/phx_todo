@@ -1,0 +1,34 @@
+<.header>
+  My Todo Lists
+  <:actions>
+    <.link href={~p"/lists/new"}>
+      <.button>New List</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="lists" rows={@lists}>
+  <:col :let={list} label="Title"><%= list.title %></:col>
+  <:action :let={list}>
+    <.link href={~p"/lists/#{list}"}>View</.link>
+  </:action>
+  <:action :let={list}>
+    <.link href={~p"/lists/#{list}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={list}>
+    <.link href={~p"/lists/#{list}"} method="delete" data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.header class="mt-10">
+  Shared With Me
+</.header>
+
+<.table id="shared_lists" rows={@shared_lists}>
+  <:col :let={shared_list} label="Title"><%= shared_list.list.title %></:col>
+  <:action :let={shared_list}>
+    <.link href={~p"/lists/#{shared_list.list}"}>View</.link>
+  </:action>
+</.table>

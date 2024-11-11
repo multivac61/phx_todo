@@ -39,9 +39,7 @@ defmodule PhxTodo.TodoListsFixtures do
   def shared_list_fixture(attrs \\ %{}) do
     {:ok, shared_list} =
       attrs
-      |> Enum.into(%{
-
-      })
+      |> Enum.into(%{})
       |> PhxTodo.TodoLists.create_shared_list()
 
     shared_list

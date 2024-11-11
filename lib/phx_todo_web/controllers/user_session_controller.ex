@@ -25,6 +25,7 @@ defmodule PhxTodoWeb.UserSessionController do
       conn
       |> put_flash(:info, info)
       |> UserAuth.log_in_user(user, user_params)
+      |> redirect(to: ~p"/lists")
     else
       # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
       conn
@@ -38,5 +39,6 @@ defmodule PhxTodoWeb.UserSessionController do
     conn
     |> put_flash(:info, "Logged out successfully.")
     |> UserAuth.log_out_user()
+    |> redirect(to: ~p"/users/log_in")
   end
 end

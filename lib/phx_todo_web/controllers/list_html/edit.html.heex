@@ -1,0 +1,16 @@
+<.header>
+  Edit List <%= @list.title %>
+  <:subtitle>Edit your todo list.</:subtitle>
+</.header>
+
+<.simple_form :let={f} for={@changeset} method="put" action={~p"/lists/#{@list}"}>
+  <.error :if={@changeset.action}>
+    Oops, something went wrong! Please check the errors below.
+  </.error>
+  <.input field={f[:title]} type="text" label="Title" />
+  <:actions>
+    <.button>Save List</.button>
+  </:actions>
+</.simple_form>
+
+<.back navigate={~p"/lists"}>Back to lists</.back>
