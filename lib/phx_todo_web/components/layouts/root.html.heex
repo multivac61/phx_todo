@@ -14,54 +14,55 @@
   <body class="bg-white">
     <ul class="relative z-10 flex items-center gap-4 p-4 sm:px-6 lg:px-8 justify-start">
       <div class="flex items-center gap-4">
-        <a href="/">
-          PhxTodov
-        </a>
-        <p class="bg-brand/5 text-brand rounded-full px-2 font-medium leading-6">
-          The best way to store and share your TODO items!
-        </p>
-      </div>
-      <%= if @current_user do %>
-        <li class="text-[0.8125rem] leading-6 text-zinc-900">
-          <%= @current_user.email %>
-        </li>
-        <li>
+    <div class="max-w-7xl mx-auto">
+      <ul class="relative z-10 flex items-center gap-4 p-4 sm:px-6 lg:px-8 justify-between">
+        <li class="flex items-center gap-4">
           <.link
-            href={~p"/users/settings"}
-            class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            href={~p"/"}
+            class="bg-brand/5 text-brand rounded-full px-2 font-medium leading-6"
           >
-            Settings
+            PhxTodov
           </.link>
         </li>
-        <li>
-          <.link
-            href={~p"/users/log_out"}
-            method="delete"
-            class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-          >
-            Log out
-          </.link>
-        </li>
-      <% else %>
-        <li>
-          <.link
-            href={~p"/users/register"}
-            class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-          >
-            Register
-          </.link>
-        </li>
-        <li>
-          <.link
-            href={~p"/users/log_in"}
-            class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-          >
-            Log in
-          </.link>
-        </li>
-      <% end %>
-    </ul>
-    <.flash_group flash={@flash} />
-    <%= @inner_content %>
+        <%= if @current_user do %>
+          <li class="text-[0.8125rem] leading-6 text-zinc-900 space-x-4">
+            <p><%= @current_user.email %></p>
+            <.link
+              href={~p"/users/settings"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Settings
+            </.link>
+
+            <.link
+              href={~p"/users/log_out"}
+              method="delete"
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Log out
+            </.link>
+          </li>
+        <% else %>
+          <li>
+            <.link
+              href={~p"/users/register"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Register
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/users/log_in"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Log in
+            </.link>
+          </li>
+        <% end %>
+      </ul>
+      <.flash_group flash={@flash} />
+      <%= @inner_content %>
+    </div>
   </body>
 </html>
