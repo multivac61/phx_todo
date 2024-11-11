@@ -1,2 +1,5 @@
-<.flash_group flash={@flash} />
-<h1>My TODO App.</h1>
+<%= if @current_user do %>
+  <p class="text-zinc-900">
+    Welcome back, <%= @current_user.email %>!
+  </p>
+<% end %>
