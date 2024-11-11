@@ -16,7 +16,9 @@ defmodule PhxTodo.TodoLists.SharedList do
     |> validate_required([:list_id, :user_id])
     |> foreign_key_constraint(:list_id)
     |> foreign_key_constraint(:user_id)
-    |> unique_constraint([:list_id, :user_id])
+    |> unique_constraint([:list_id, :user_id],
+      message: "List is already shared with this user"
+    )
   end
 
   def get_shared_lists(user_id) do

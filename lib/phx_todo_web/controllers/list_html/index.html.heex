@@ -1,5 +1,6 @@
+# lib/phx_todo_web/controllers/list_html/index.html.heex
 <.header>
-  My Todo Lists
+  My Lists
   <:actions>
     <.link href={~p"/lists/new"}>
       <.button>New List</.button>
@@ -7,16 +8,29 @@
   </:actions>
 </.header>
 
-<.table id="lists" rows={@lists}>
-  <:col :let={list} label="Title"><%= list.title %></:col>
+<.table id="my_lists" rows={@my_lists}>
+  <:col :let={list} label="Title">
+    <div class="font-medium text-zinc-900">
+      <%= list.title %>
+    </div>
+  </:col>
   <:action :let={list}>
-    <.link href={~p"/lists/#{list}"}>View</.link>
+    <.link href={~p"/lists/#{list}"} class="text-zinc-600 hover:text-zinc-900">
+      View
+    </.link>
   </:action>
   <:action :let={list}>
-    <.link href={~p"/lists/#{list}/edit"}>Edit</.link>
+    <.link href={~p"/lists/#{list}/edit"} class="text-zinc-600 hover:text-zinc-900">
+      Edit
+    </.link>
   </:action>
   <:action :let={list}>
-    <.link href={~p"/lists/#{list}"} method="delete" data-confirm="Are you sure?">
+    <.link
+      href={~p"/lists/#{list}"}
+      method="delete"
+      data-confirm="Are you sure?"
+      class="text-red-600 hover:text-red-700"
+    >
       Delete
     </.link>
   </:action>
@@ -26,9 +40,24 @@
   Shared With Me
 </.header>
 
-<.table id="shared_lists" rows={@shared_lists}>
-  <:col :let={shared_list} label="Title"><%= shared_list.list.title %></:col>
+<.table :if={length(@shared_lists) > 0} id="shared_lists" rows={@shared_lists}>
+  <:col :let={shared_list} label="Title">
+    <div class="font-medium text-zinc-900">
+      <%= shared_list.list.title %>
+    </div>
+  </:col>
+  <:col :let={shared_list} label="Shared By">
+    <div class="text-sm text-zinc-600">
+      <%= shared_list.list.user.email %>
+    </div>
+  </:col>
   <:action :let={shared_list}>
-    <.link href={~p"/lists/#{shared_list.list}"}>View</.link>
+    <.link href={~p"/lists/#{shared_list.list}"} class="text-zinc-600 hover:text-zinc-900">
+      View
+    </.link>
   </:action>
 </.table>
+
+<p :if={length(@shared_lists) == 0} class="text-sm mt-4 text-zinc-600 italic">
+  No lists have been shared with you yet.
+</p>

@@ -43,7 +43,7 @@ defmodule PhxTodoWeb do
         layouts: [html: PhxTodoWeb.Layouts]
 
       import Plug.Conn
-      import PhxTodoWeb.Gettext
+      use Gettext, backend: PhxTodoWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -85,7 +85,7 @@ defmodule PhxTodoWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import PhxTodoWeb.CoreComponents
-      import PhxTodoWeb.Gettext
+      use Gettext, backend: PhxTodoWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

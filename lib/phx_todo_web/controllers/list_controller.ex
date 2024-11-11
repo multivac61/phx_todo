@@ -4,11 +4,16 @@ defmodule PhxTodoWeb.ListController do
   alias PhxTodo.TodoLists
   alias PhxTodo.TodoLists.List
 
-  def index(conn, _params) do
+   def index(conn, _params) do
     current_user = conn.assigns.current_user
-    lists = TodoLists.get_user_lists(current_user.id)
+    my_lists = TodoLists.get_user_lists(current_user.id)
     shared_lists = TodoLists.get_shared_lists(current_user.id)
-    render(conn, :index, lists: lists, shared_lists: shared_lists)
+
+    render(conn, :index, 
+      my_lists: my_lists,
+      shared_lists: shared_lists,
+      current_user: current_user
+    )
   end
 
   def new(conn, _params) do
@@ -37,7 +42,14 @@ defmodule PhxTodoWeb.ListController do
 
     if TodoLists.can_access_list?(list.id, current_user.id) do
       todos = TodoLists.get_todos_for_list(list.id)
-      render(conn, :show, list: list, todos: todos)
+      shared_with_users = TodoLists.get_shared_users(list.id)
+
+      render(conn, :show,
+        list: list,
+        todos: todos,
+        shared_with_users: shared_with_users,
+        current_user: current_user
+      )
     else
       conn
       |> put_flash(:error, "You don't have access to this list")

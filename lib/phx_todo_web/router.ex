@@ -89,6 +89,8 @@ defmodule PhxTodoWeb.Router do
     resources "/lists", ListController do
       resources "/todos", TodoController
       put "/todos/:todo_id/toggle", TodoController, :toggle
+      post "/share", ShareController, :create
+      delete "/share/:user_id", ShareController, :delete
     end
   end
 end

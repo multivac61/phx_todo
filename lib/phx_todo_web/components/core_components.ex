@@ -17,7 +17,7 @@ defmodule PhxTodoWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import PhxTodoWeb.Gettext
+  use Gettext, backend: PhxTodoWeb.Gettext
 
   @doc """
   Renders a modal.

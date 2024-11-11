@@ -6,8 +6,14 @@ defmodule PhxTodo.TodoLists do
   def get_user_lists(user_id) do
     List
     |> where(user_id: ^user_id)
-    # Optionally preload todos
-    |> preload(:todos)
+    |> preload([:todos])
+    |> Repo.all()
+  end
+
+  def get_shared_lists(user_id) do
+    SharedList
+    |> where(user_id: ^user_id)
+    |> preload(list: [:user, :todos])
     |> Repo.all()
   end
 
@@ -78,15 +84,6 @@ defmodule PhxTodo.TodoLists do
     Repo.delete(shared_list)
   end
 
-  def get_shared_list!(id), do: Repo.get!(SharedList, id)
-
-  def get_shared_lists(user_id) do
-    SharedList
-    |> where(user_id: ^user_id)
-    |> preload(:list)
-    |> Repo.all()
-  end
-
   def share_list(list_id, user_id) do
     create_shared_list(%{
       list_id: list_id,
@@ -113,5 +110,13 @@ defmodule PhxTodo.TodoLists do
         )
     )
     |> Repo.exists?()
+  end
+
+  def get_shared_users(list_id) do
+    SharedList
+    |> where(list_id: ^list_id)
+    |> join(:inner, [sl], u in assoc(sl, :user))
+    |> select([_sl, u], u)
+    |> Repo.all()
   end
 end

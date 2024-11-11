@@ -14,6 +14,36 @@
   </:actions>
 </.simple_form>
 
+<%= if @current_user.id == @list.user_id do %>
+  <div class="mt-10">
+    <.header>
+      Share This List
+    </.header>
+
+    <.simple_form :let={f} for={%{}} action={~p"/lists/#{@list}/share"}>
+      <.input field={f[:email]} type="email" label="Friend's Email" required />
+      <:actions>
+        <.button>Share List</.button>
+      </:actions>
+    </.simple_form>
+
+    <%= if length(@shared_with_users) > 0 do %>
+      <.table id="shared_users" rows={@shared_with_users}>
+        <:col :let={user} label="Shared With"><%= user.email %></:col>
+        <:action :let={user}>
+          <.link
+            href={~p"/lists/#{@list}/share/#{user.id}"}
+            method="delete"
+            data-confirm="Are you sure you want to remove sharing with this user?"
+          >
+            Remove
+          </.link>
+        </:action>
+      </.table>
+    <% end %>
+  </div>
+<% end %>
+
 <.table id="todos" rows={@todos}>
   <:col :let={todo} label="Status">
     <.link href={~p"/lists/#{@list}/todos/#{todo}/toggle"} method="put">
