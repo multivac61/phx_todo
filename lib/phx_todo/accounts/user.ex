@@ -8,6 +8,10 @@ defmodule PhxTodo.Accounts.User do
     field :hashed_password, :string, redact: true
     field :current_password, :string, virtual: true, redact: true
     field :confirmed_at, :utc_datetime
+    has_many :lists, PhxTodo.TodoLists.List
+    has_many :todos, PhxTodo.TodoLists.Todo
+    has_many :shared_lists, PhxTodo.TodoLists.SharedList
+    has_many :shared_with_me, through: [:shared_lists, :list]
 
     timestamps(type: :utc_datetime)
   end
