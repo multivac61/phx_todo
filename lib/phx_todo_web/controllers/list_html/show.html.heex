@@ -7,6 +7,27 @@
   </:actions>
 </.header>
 
+<.table id="todos" rows={@todos}>
+  <:col :let={todo} label="Status">
+    <.link href={~p"/lists/#{@list}/todos/#{todo}/toggle"} method="put">
+      <%= if todo.completed do %>
+        ✅
+      <% else %>
+        ⬜️
+      <% end %>
+    </.link>
+  </:col>
+  <:col :let={todo} label="Title"><%= todo.title %></:col>
+  <:action :let={todo}>
+    <.link href={~p"/lists/#{@list}/todos/#{todo}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={todo}>
+    <.link href={~p"/lists/#{@list}/todos/#{todo}"} method="delete" data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
+
 <.simple_form :let={f} for={%{}} action={~p"/lists/#{@list}/todos"}>
   <.input field={f[:title]} type="text" label="New Todo" />
   <:actions>
@@ -43,26 +64,5 @@
     <% end %>
   </div>
 <% end %>
-
-<.table id="todos" rows={@todos}>
-  <:col :let={todo} label="Status">
-    <.link href={~p"/lists/#{@list}/todos/#{todo}/toggle"} method="put">
-      <%= if todo.completed do %>
-        ✅
-      <% else %>
-        ⬜️
-      <% end %>
-    </.link>
-  </:col>
-  <:col :let={todo} label="Title"><%= todo.title %></:col>
-  <:action :let={todo}>
-    <.link href={~p"/lists/#{@list}/todos/#{todo}/edit"}>Edit</.link>
-  </:action>
-  <:action :let={todo}>
-    <.link href={~p"/lists/#{@list}/todos/#{todo}"} method="delete" data-confirm="Are you sure?">
-      Delete
-    </.link>
-  </:action>
-</.table>
 
 <.back navigate={~p"/lists"}>Back to lists</.back>
