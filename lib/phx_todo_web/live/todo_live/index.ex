@@ -7,12 +7,37 @@ defmodule PhxTodoWeb.TodoLive.Index do
   def mount(_params, session, socket) do
     user = PhxTodo.Accounts.get_user_by_session_token(session["user_token"])
 
-    {:ok,
-     socket
-     |> assign(:current_user, user)
-     |> assign(:filters, %{search: "", status: "all"})
-     |> assign(:new_todo, "")
-     |> stream(:todos, Todos.list_todos(user))}
+    socket
+    |> assign(:current_user, user)
+    |> assign(:filters, %{search: "", status: "all"})
+    |> assign(:new_todo, "")
+    |> assign(:sort, %{by: :inserted_at, order: :desc})
+    |> stream(:todos, Todos.list_todos(user))
+    |> then(&{:ok, &1})
+  end
+
+  defp toggle_sort(by, current_sort) do
+    by = String.to_existing_atom(by)
+
+    cond do
+      current_sort.by != by -> %{by: by, order: :asc}
+      current_sort.order == :asc -> %{by: by, order: :desc}
+      true -> %{by: by, order: :asc}
+    end
+  end
+
+  @impl true
+  def handle_event("sort", %{"by" => by}, socket) do
+    new_sort = toggle_sort(by, socket.assigns.sort)
+
+    socket
+    |> assign(:sort, new_sort)
+    |> stream(
+      :todos,
+      Todos.list_todos(socket.assigns.current_user, socket.assigns.filters, new_sort),
+      reset: true
+    )
+    |> then(&{:noreply, &1})
   end
 
   @impl true
@@ -21,9 +46,9 @@ defmodule PhxTodoWeb.TodoLive.Index do
     {:ok, updated_todo} = Todos.toggle_todo(todo)
 
     if matches_filters?(updated_todo, socket.assigns.filters) do
-      {:noreply, stream_insert(socket, :todos, updated_todo)}
+      socket |> stream_insert(:todos, updated_todo) |> then(&{:noreply, &1})
     else
-      {:noreply, stream_delete(socket, :todos, todo)}
+      socket |> stream_delete(:todos, todo) |> then(&{:noreply, &1})
     end
   end
 
@@ -34,9 +59,9 @@ defmodule PhxTodoWeb.TodoLive.Index do
     case Todos.update_todo(todo, %{title: title}) do
       {:ok, updated_todo} ->
         if matches_filters?(updated_todo, socket.assigns.filters) do
-          {:noreply, stream_insert(socket, :todos, updated_todo)}
+          socket |> stream_insert(:todos, updated_todo) |> then(&{:noreply, &1})
         else
-          {:noreply, stream_delete(socket, :todos, todo)}
+          socket |> stream_delete(:todos, todo) |> then(&{:noreply, &1})
         end
 
       {:error, _changeset} ->
@@ -49,24 +74,26 @@ defmodule PhxTodoWeb.TodoLive.Index do
     filters = Map.put(socket.assigns.filters, :search, search)
     todos = Todos.list_todos(socket.assigns.current_user, filters)
 
-    {:noreply,
-     socket
-     |> assign(:filters, filters)
-     |> stream(:todos, todos, reset: true)}
+    socket
+    |> assign(:filters, filters)
+    |> stream(:todos, todos, reset: true)
+    |> then(&{:noreply, &1})
   end
 
   @impl true
   def handle_event("filter-status", %{"status" => status}, socket) do
     filters = Map.put(socket.assigns.filters, :status, status)
-    todos = Todos.list_todos(socket.assigns.current_user, filters)
 
-    {:noreply,
-     socket
-     |> assign(:filters, filters)
-     |> stream(:todos, todos, reset: true)}
+    socket
+    |> assign(:filters, filters)
+    |> stream(
+      :todos,
+      Todos.list_todos(socket.assigns.current_user, filters, socket.assigns.sort),
+      reset: true
+    )
+    |> then(&{:noreply, &1})
   end
 
-  # Update the create and validate event handlers:
   @impl true
   def handle_event("create", %{"title" => title}, socket) when title != "" do
     case Todos.create_todo(%{
@@ -74,15 +101,19 @@ defmodule PhxTodoWeb.TodoLive.Index do
            "completed" => false,
            "user_id" => socket.assigns.current_user.id
          }) do
-      {:ok, todo} ->
-        if matches_filters?(todo, socket.assigns.filters) do
-          {:noreply,
-           socket
-           |> assign(:new_todo, "")
-           |> stream_insert(:todos, todo)}
-        else
-          {:noreply, assign(socket, :new_todo, "")}
-        end
+      {:ok, _todo} ->
+        # NOTE: This fetches the full list again to maintain sort order... not scalable
+        todos =
+          Todos.list_todos(
+            socket.assigns.current_user,
+            socket.assigns.filters,
+            socket.assigns.sort
+          )
+
+        {:noreply,
+         socket
+         |> assign(:new_todo, "")
+         |> stream(:todos, todos, reset: true)}
 
       {:error, _changeset} ->
         {:noreply, socket}
@@ -93,7 +124,7 @@ defmodule PhxTodoWeb.TodoLive.Index do
 
   @impl true
   def handle_event("validate", %{"title" => title}, socket) do
-    {:noreply, assign(socket, :new_todo, title)}
+    socket |> assign(:new_todo, title) |> then(&{:noreply, &1})
   end
 
   defp matches_filters?(todo, filters) do
@@ -118,13 +149,7 @@ defmodule PhxTodoWeb.TodoLive.Index do
     ~H"""
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="mb-8 space-y-4">
-        <.form
-          :let={f}
-          for={%{}}
-          phx-submit="create"
-          phx-change="validate"
-          class="flex gap-4 items-end"
-        >
+        <.form for={%{}} phx-submit="create" phx-change="validate" class="flex gap-4 items-end">
           <div class="flex-1">
             <.input
               type="text"
@@ -182,6 +207,72 @@ defmodule PhxTodoWeb.TodoLive.Index do
             >
               Completed
             </.link>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 justify-end">
+          <span class="text-sm font-medium text-zinc-700">
+            Sort by:
+          </span>
+          <div class="inline-flex rounded-md">
+            <div class="flex space-x-2">
+              <.link
+                type="button"
+                phx-click="sort"
+                phx-value-by="title"
+                class={[
+                  "px-3 py-2 rounded-md text-sm font-medium",
+                  @sort.by == :title && "bg-zinc-800 text-white",
+                  @sort.by == :title && "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+                ]}
+              >
+                Title
+                <%= if @sort.by == :title do %>
+                  <%= if @sort.order == :asc do %>
+                    <.icon name="hero-arrow-down-mini" class="h-4 w-4" />
+                  <% else %>
+                    <.icon name="hero-arrow-up-mini" class="h-4 w-4" />
+                  <% end %>
+                <% end %>
+              </.link>
+              <.link
+                type="button"
+                phx-click="sort"
+                phx-value-by="completed"
+                class={[
+                  "px-3 py-2 rounded-md text-sm font-medium",
+                  @sort.by == :completed && "bg-zinc-800 text-white",
+                  @sort.by == :completed && "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+                ]}
+              >
+                Status
+                <%= if @sort.by == :completed do %>
+                  <%= if @sort.order == :asc do %>
+                    <.icon name="hero-arrow-up-mini" class="h-4 w-4" />
+                  <% else %>
+                    <.icon name="hero-arrow-down-mini" class="h-4 w-4" />
+                  <% end %>
+                <% end %>
+              </.link>
+              <.link
+                type="button"
+                phx-click="sort"
+                phx-value-by="inserted_at"
+                class={[
+                  "px-3 py-2 rounded-md text-sm font-medium",
+                  @sort.by == :inserted_at && "bg-zinc-800 text-white",
+                  @sort.by == :inserted_at && "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+                ]}
+              >
+                Modified
+                <%= if @sort.by == :inserted_at do %>
+                  <%= if @sort.order == :asc do %>
+                    <.icon name="hero-arrow-down-mini" class="h-4 w-4" />
+                  <% else %>
+                    <.icon name="hero-arrow-up-mini" class="h-4 w-4" />
+                  <% end %>
+                <% end %>
+              </.link>
+            </div>
           </div>
         </div>
       </div>
