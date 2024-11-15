@@ -7,6 +7,7 @@ defmodule PhxTodoWeb.UserSessionControllerTest do
     %{user: user_fixture()}
   end
 
+  # TODO: Fix tests
   describe "POST /users/log_in" do
     test "logs the user in", %{conn: conn, user: user} do
       conn =
@@ -15,7 +16,7 @@ defmodule PhxTodoWeb.UserSessionControllerTest do
         })
 
       assert get_session(conn, :user_token)
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/todos"
 
       # Now do a logged in request and assert on the menu
       conn = get(conn, ~p"/")
@@ -36,7 +37,7 @@ defmodule PhxTodoWeb.UserSessionControllerTest do
         })
 
       assert conn.resp_cookies["_phx_todo_web_user_remember_me"]
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/todos"
     end
 
     test "logs the user in with return to", %{conn: conn, user: user} do
