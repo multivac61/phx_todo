@@ -222,7 +222,7 @@ defmodule PhxTodoWeb.TodoLive.Index do
                 class={[
                   "px-3 py-2 rounded-md text-sm font-medium",
                   @sort.by == :title && "bg-zinc-800 text-white",
-                  @sort.by == :title && "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+                  @sort.by != :title && "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
                 ]}
               >
                 Title
@@ -241,7 +241,7 @@ defmodule PhxTodoWeb.TodoLive.Index do
                 class={[
                   "px-3 py-2 rounded-md text-sm font-medium",
                   @sort.by == :completed && "bg-zinc-800 text-white",
-                  @sort.by == :completed && "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+                  @sort.by != :completed && "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
                 ]}
               >
                 Status
@@ -260,7 +260,7 @@ defmodule PhxTodoWeb.TodoLive.Index do
                 class={[
                   "px-3 py-2 rounded-md text-sm font-medium",
                   @sort.by == :inserted_at && "bg-zinc-800 text-white",
-                  @sort.by == :inserted_at && "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+                  @sort.by != :inserted_at && "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
                 ]}
               >
                 Modified
