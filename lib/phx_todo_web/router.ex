@@ -82,15 +82,4 @@ defmodule PhxTodoWeb.Router do
       live "/users/confirm", UserConfirmationInstructionsLive, :new
     end
   end
-
-  scope "/", PhxTodoWeb do
-    pipe_through [:browser, :require_authenticated_user]
-
-    resources "/lists", ListController do
-      resources "/todos", TodoController
-      put "/todos/:todo_id/toggle", TodoController, :toggle
-      post "/share", ShareController, :create
-      delete "/share/:user_id", ShareController, :delete
-    end
-  end
 end

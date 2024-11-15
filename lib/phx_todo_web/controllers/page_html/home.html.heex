@@ -1,25 +1,14 @@
-<div class="flex justify-between items-center">
+<div class="flex my-8">
   <%= if @current_user do %>
     <div class="flex flex-col space-y-4">
       <p class="text-zinc-900">
         Welcome back, <%= @current_user.email %>!
       </p>
-      <.link
-        href={~p"/lists"}
-        class="rounded-lg bg-zinc-100 px-3 py-2 hover:bg-zinc-200/80 text-zinc-900"
-      >
-        Your Lists
-      </.link>
-</div>
+    </div>
   <% else %>
-    <div class="space-y-4 sm:flex sm:space-y-0 sm:space-x-4">
-      <h1>Welcome to the most amazing TODO add in the world.</h1>
-      <.link
-        href={~p"/users/register"}
-        class="rounded-lg bg-zinc-100 px-3 py-2 hover:bg-zinc-200/80 text-zinc-900"
-      >
-        Please register here!
-      </.link>
+    <div class="space-y-4 flex sm:space-y-32 sm:py-16 flex-col justify-center items-center w-full">
+      <h1 class="sm:text-6xl">Create TODOs and share with friends!</h1>
+      <img src={~p"/images/logo.svg"} alt="Logo" class="max-w-xl" />
     </div>
   <% end %>
 </div>
