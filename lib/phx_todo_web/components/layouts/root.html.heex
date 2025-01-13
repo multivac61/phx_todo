@@ -42,22 +42,23 @@
           </li>
         <% else %>
           <div class="flex flex-row space-x-4">
-          <li>
-            <.link
-              href={~p"/users/register"}
-              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-            >
-              Register
-            </.link>
-          </li>
-          <li>
-            <.link
-              href={~p"/users/log_in"}
-              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-            >
-              Log in
-            </.link>
-          </li></div>
+            <li>
+              <.link
+                href={~p"/users/register"}
+                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+              >
+                Register
+              </.link>
+            </li>
+            <li>
+              <.link
+                href={~p"/users/log_in"}
+                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+              >
+                Log in
+              </.link>
+            </li>
+          </div>
         <% end %>
       </ul>
       <.flash_group flash={@flash} />
