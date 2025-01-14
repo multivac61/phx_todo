@@ -48,6 +48,9 @@
                 };
 
                 processes.phoenix.exec = "mix phx.server";
+
+                services.tailscale.funnel.enable = true;
+                services.tailscale.funnel.target = "localhost:4000";
               }
             ];
           };
