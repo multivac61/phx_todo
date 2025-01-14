@@ -1,0 +1,42 @@
+<.header>
+  Listing Todos
+  <:actions>
+    <.link patch={~p"/todos/new"}>
+      <.button>New To do</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="todos"
+  rows={@streams.todos}
+  row_click={fn {_id, to_do} -> JS.navigate(~p"/todos/#{to_do}") end}
+>
+  <:col :let={{_id, to_do}} label="Name">{to_do.name}</:col>
+  <:col :let={{_id, to_do}} label="Done">{to_do.done}</:col>
+  <:action :let={{_id, to_do}}>
+    <div class="sr-only">
+      <.link navigate={~p"/todos/#{to_do}"}>Show</.link>
+    </div>
+    <.link patch={~p"/todos/#{to_do}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, to_do}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: to_do.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="to_do-modal" show on_cancel={JS.patch(~p"/todos")}>
+  <.live_component
+    module={PhxTodoWeb.ToDoLive.FormComponent}
+    id={@to_do.id || :new}
+    title={@page_title}
+    action={@live_action}
+    to_do={@to_do}
+    patch={~p"/todos"}
+  />
+</.modal>
