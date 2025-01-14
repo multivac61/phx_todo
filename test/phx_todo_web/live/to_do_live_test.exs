@@ -17,19 +17,19 @@ defmodule PhxTodoWeb.ToDoLiveTest do
     setup [:create_to_do]
 
     test "lists all todos", %{conn: conn, to_do: to_do} do
-      {:ok, _index_live, html} = live(conn, ~p"/todos")
+      {:ok, _index_live, html} = live(conn, ~p"/")
 
       assert html =~ "Listing Todos"
       assert html =~ to_do.name
     end
 
     test "saves new to_do", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/todos")
+      {:ok, index_live, _html} = live(conn, ~p"/")
 
       assert index_live |> element("a", "New To do") |> render_click() =~
                "New To do"
 
-      assert_patch(index_live, ~p"/todos/new")
+      assert_patch(index_live, ~p"/new")
 
       assert index_live
              |> form("#to_do-form", to_do: @invalid_attrs)
@@ -39,7 +39,7 @@ defmodule PhxTodoWeb.ToDoLiveTest do
              |> form("#to_do-form", to_do: @create_attrs)
              |> render_submit()
 
-      assert_patch(index_live, ~p"/todos")
+      assert_patch(index_live, ~p"/")
 
       html = render(index_live)
       assert html =~ "To do created successfully"
@@ -47,12 +47,12 @@ defmodule PhxTodoWeb.ToDoLiveTest do
     end
 
     test "updates to_do in listing", %{conn: conn, to_do: to_do} do
-      {:ok, index_live, _html} = live(conn, ~p"/todos")
+      {:ok, index_live, _html} = live(conn, ~p"/")
 
       assert index_live |> element("#todos-#{to_do.id} a", "Edit") |> render_click() =~
                "Edit To do"
 
-      assert_patch(index_live, ~p"/todos/#{to_do}/edit")
+      assert_patch(index_live, ~p"/#{to_do}/edit")
 
       assert index_live
              |> form("#to_do-form", to_do: @invalid_attrs)
@@ -62,7 +62,7 @@ defmodule PhxTodoWeb.ToDoLiveTest do
              |> form("#to_do-form", to_do: @update_attrs)
              |> render_submit()
 
-      assert_patch(index_live, ~p"/todos")
+      assert_patch(index_live, ~p"/")
 
       html = render(index_live)
       assert html =~ "To do updated successfully"
@@ -70,7 +70,7 @@ defmodule PhxTodoWeb.ToDoLiveTest do
     end
 
     test "deletes to_do in listing", %{conn: conn, to_do: to_do} do
-      {:ok, index_live, _html} = live(conn, ~p"/todos")
+      {:ok, index_live, _html} = live(conn, ~p"/")
 
       assert index_live |> element("#todos-#{to_do.id} a", "Delete") |> render_click()
       refute has_element?(index_live, "#todos-#{to_do.id}")
@@ -81,19 +81,19 @@ defmodule PhxTodoWeb.ToDoLiveTest do
     setup [:create_to_do]
 
     test "displays to_do", %{conn: conn, to_do: to_do} do
-      {:ok, _show_live, html} = live(conn, ~p"/todos/#{to_do}")
+      {:ok, _show_live, html} = live(conn, ~p"/#{to_do}")
 
       assert html =~ "Show To do"
       assert html =~ to_do.name
     end
 
     test "updates to_do within modal", %{conn: conn, to_do: to_do} do
-      {:ok, show_live, _html} = live(conn, ~p"/todos/#{to_do}")
+      {:ok, show_live, _html} = live(conn, ~p"/#{to_do}")
 
       assert show_live |> element("a", "Edit") |> render_click() =~
                "Edit To do"
 
-      assert_patch(show_live, ~p"/todos/#{to_do}/show/edit")
+      assert_patch(show_live, ~p"/#{to_do}/show/edit")
 
       assert show_live
              |> form("#to_do-form", to_do: @invalid_attrs)
@@ -103,7 +103,7 @@ defmodule PhxTodoWeb.ToDoLiveTest do
              |> form("#to_do-form", to_do: @update_attrs)
              |> render_submit()
 
-      assert_patch(show_live, ~p"/todos/#{to_do}")
+      assert_patch(show_live, ~p"/#{to_do}")
 
       html = render(show_live)
       assert html =~ "To do updated successfully"

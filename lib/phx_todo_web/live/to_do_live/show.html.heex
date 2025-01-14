@@ -2,7 +2,7 @@
   To do {@to_do.id}
   <:subtitle>This is a to_do record from your database.</:subtitle>
   <:actions>
-    <.link patch={~p"/todos/#{@to_do}/show/edit"} phx-click={JS.push_focus()}>
+    <.link patch={~p"/#{@to_do}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit to_do</.button>
     </.link>
   </:actions>
@@ -13,15 +13,15 @@
   <:item title="Done">{@to_do.done}</:item>
 </.list>
 
-<.back navigate={~p"/todos"}>Back to todos</.back>
+<.back navigate={~p"/"}>Back to todos</.back>
 
-<.modal :if={@live_action == :edit} id="to_do-modal" show on_cancel={JS.patch(~p"/todos/#{@to_do}")}>
+<.modal :if={@live_action == :edit} id="to_do-modal" show on_cancel={JS.patch(~p"/#{@to_do}")}>
   <.live_component
     module={PhxTodoWeb.ToDoLive.FormComponent}
     id={@to_do.id}
     title={@page_title}
     action={@live_action}
     to_do={@to_do}
-    patch={~p"/todos/#{@to_do}"}
+    patch={~p"/#{@to_do}"}
   />
 </.modal>

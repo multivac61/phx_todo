@@ -17,14 +17,12 @@ defmodule PhxTodoWeb.Router do
   scope "/", PhxTodoWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", ToDoLive.Index, :index
+    live "/new", ToDoLive.Index, :new
+    live "/:id/edit", ToDoLive.Index, :edit
 
-    live "/todos", ToDoLive.Index, :index
-    live "/todos/new", ToDoLive.Index, :new
-    live "/todos/:id/edit", ToDoLive.Index, :edit
-
-    live "/todos/:id", ToDoLive.Show, :show
-    live "/todos/:id/show/edit", ToDoLive.Show, :edit
+    live "/:id", ToDoLive.Show, :show
+    live "/:id/show/edit", ToDoLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.
