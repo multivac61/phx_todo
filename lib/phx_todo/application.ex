@@ -4,6 +4,7 @@ defmodule PhxTodo.Application do
   @moduledoc false
 
   use Application
+  alias PhxTodo.ToDos.ToDo
 
   @impl true
   def start(_type, _args) do
@@ -12,6 +13,14 @@ defmodule PhxTodo.Application do
       PhxTodo.Repo,
       {DNSCluster, query: Application.get_env(:phx_todo, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: PhxTodo.PubSub},
+      {EctoWatch,
+       repo: PhxTodo.Repo,
+       pub_sub: PhxTodo.PubSub,
+       watchers: [
+         {ToDo, :inserted},
+         {ToDo, :updated},
+         {ToDo, :deleted}
+       ]},
       # Start the Finch HTTP client for sending emails
       {Finch, name: PhxTodo.Finch},
       # Start a worker by calling: PhxTodo.Worker.start_link(arg)

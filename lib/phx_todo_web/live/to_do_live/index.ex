@@ -6,6 +6,12 @@ defmodule PhxTodoWeb.ToDoLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      EctoWatch.subscribe({ToDo, :inserted})
+      EctoWatch.subscribe({ToDo, :updated})
+      EctoWatch.subscribe({ToDo, :deleted})
+    end
+
     {:ok, stream(socket, :todos, ToDos.list_todos())}
   end
 
@@ -35,6 +41,26 @@ defmodule PhxTodoWeb.ToDoLive.Index do
   @impl true
   def handle_info({PhxTodoWeb.ToDoLive.FormComponent, {:saved, to_do}}, socket) do
     {:noreply, stream_insert(socket, :todos, to_do)}
+  end
+
+  def handle_info({{ToDo, :inserted}, %{id: id}}, socket) do
+    to_do = ToDos.get_to_do!(id)
+    socket = stream_insert(socket, :todos, to_do)
+
+    {:noreply, socket}
+  end
+
+  def handle_info({{ToDo, :updated}, %{id: id}}, socket) do
+    to_do = ToDos.get_to_do!(id)
+    socket = stream_insert(socket, :todos, to_do)
+
+    {:noreply, socket}
+  end
+
+  def handle_info({{ToDo, :deleted}, %{id: id}}, socket) do
+    socket = stream_delete_by_dom_id(socket, :todos, "todos-#{id}")
+
+    {:noreply, socket}
   end
 
   @impl true
