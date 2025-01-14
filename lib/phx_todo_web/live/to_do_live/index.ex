@@ -22,13 +22,13 @@ defmodule PhxTodoWeb.ToDoLive.Index do
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
-    |> assign(:page_title, "Edit To do")
+    |> assign(:page_title, "Edit")
     |> assign(:to_do, ToDos.get_to_do!(id))
   end
 
   defp apply_action(socket, :new, _params) do
     socket
-    |> assign(:page_title, "New To do")
+    |> assign(:page_title, "New")
     |> assign(:to_do, %ToDo{})
   end
 

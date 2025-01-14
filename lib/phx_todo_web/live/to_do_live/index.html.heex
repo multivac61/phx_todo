@@ -2,7 +2,7 @@
   Listing Todos
   <:actions>
     <.link patch={~p"/new"}>
-      <.button>New To do</.button>
+      <.button>New</.button>
     </.link>
   </:actions>
 </.header>
@@ -21,10 +21,7 @@
     <.link patch={~p"/#{to_do}/edit"}>Edit</.link>
   </:action>
   <:action :let={{id, to_do}}>
-    <.link
-      phx-click={JS.push("delete", value: %{id: to_do.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
-    >
+    <.link phx-click={JS.push("delete", value: %{id: to_do.id}) |> hide("##{id}")}>
       Delete
     </.link>
   </:action>

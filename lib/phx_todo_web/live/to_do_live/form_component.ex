@@ -22,7 +22,7 @@ defmodule PhxTodoWeb.ToDoLive.FormComponent do
         <.input field={@form[:name]} type="text" label="Name" />
         <.input field={@form[:done]} type="checkbox" label="Done" />
         <:actions>
-          <.button phx-disable-with="Saving...">Save To do</.button>
+          <.button phx-disable-with="Saving...">Save</.button>
         </:actions>
       </.simple_form>
     </div>

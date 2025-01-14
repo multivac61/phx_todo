@@ -26,8 +26,8 @@ defmodule PhxTodoWeb.ToDoLiveTest do
     test "saves new to_do", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/")
 
-      assert index_live |> element("a", "New To do") |> render_click() =~
-               "New To do"
+      assert index_live |> element("a", "New") |> render_click() =~
+               "New"
 
       assert_patch(index_live, ~p"/new")
 
@@ -50,7 +50,7 @@ defmodule PhxTodoWeb.ToDoLiveTest do
       {:ok, index_live, _html} = live(conn, ~p"/")
 
       assert index_live |> element("#todos-#{to_do.id} a", "Edit") |> render_click() =~
-               "Edit To do"
+               "Edit"
 
       assert_patch(index_live, ~p"/#{to_do}/edit")
 
@@ -91,7 +91,7 @@ defmodule PhxTodoWeb.ToDoLiveTest do
       {:ok, show_live, _html} = live(conn, ~p"/#{to_do}")
 
       assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit To do"
+               "Edit"
 
       assert_patch(show_live, ~p"/#{to_do}/show/edit")
 

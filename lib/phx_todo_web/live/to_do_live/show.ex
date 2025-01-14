@@ -17,5 +17,5 @@ defmodule PhxTodoWeb.ToDoLive.Show do
   end
 
   defp page_title(:show), do: "Show To do"
-  defp page_title(:edit), do: "Edit To do"
+  defp page_title(:edit), do: "Edit"
 end
