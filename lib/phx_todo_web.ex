@@ -56,6 +56,10 @@ defmodule PhxTodoWeb do
         layout: {PhxTodoWeb.Layouts, :app}
 
       unquote(html_helpers())
+
+      def ok(socket), do: {:ok, socket}
+      def noreply(socket), do: {:noreply, socket}
+      def reply(socket), do: {:reply, socket}
     end
   end
 

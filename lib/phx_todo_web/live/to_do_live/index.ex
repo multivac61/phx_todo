@@ -13,12 +13,12 @@ defmodule PhxTodoWeb.ToDoLive.Index do
       EctoWatch.subscribe({ToDo, :deleted})
     end
 
-    {:ok, stream(socket, :todos, ToDos.list_todos())}
+    socket |> stream(:todos, ToDos.list_todos()) |> ok()
   end
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    socket |> apply_action(socket.assigns.live_action, params) |> noreply()
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
@@ -41,31 +41,21 @@ defmodule PhxTodoWeb.ToDoLive.Index do
 
   @impl true
   def handle_info({PhxTodoWeb.ToDoLive.FormComponent, {:saved, to_do}}, socket) do
-    {:noreply, stream_insert(socket, :todos, to_do)}
+    socket |> stream_insert(:todos, to_do) |> noreply()
   end
 
   def handle_info({{ToDo, :deleted}, %{id: id}}, socket) do
-    socket = stream_delete_by_dom_id(socket, :todos, "todos-#{id}")
-
-    {:noreply, socket}
+    socket |> stream_delete_by_dom_id(:todos, "todos-#{id}") |> noreply()
   end
 
   def handle_info({{ToDo, :inserted}, %{id: id}}, socket) do
-    to_do = ToDos.get_to_do!(id)
-    socket = stream_insert(socket, :todos, to_do)
-    {:noreply, socket}
+    socket |> stream_insert(:todos, ToDos.get_to_do!(id)) |> noreply()
   end
 
   def handle_info({{ToDo, :updated}, %{id: id}}, socket) do
     to_do = ToDos.get_to_do!(id)
 
-    # Remove the existing todo from the stream
-    socket = stream_delete(socket, :todos, to_do)
-
-    # Reinsert the updated todo at the end of the stream
-    socket = stream_insert(socket, :todos, to_do)
-
-    {:noreply, socket}
+    socket |> stream_delete(:todos, to_do) |> stream_insert(:todos, to_do) |> noreply()
   end
 
   @impl true
@@ -73,6 +63,6 @@ defmodule PhxTodoWeb.ToDoLive.Index do
     to_do = ToDos.get_to_do!(id)
     {:ok, _} = ToDos.delete_to_do(to_do)
 
-    {:noreply, stream_delete(socket, :todos, to_do)}
+    socket |> stream_delete(:todos, to_do) |> noreply()
   end
 end
