@@ -18,7 +18,7 @@ defmodule PhxTodo.ToDos do
 
   """
   def list_todos do
-    Repo.all(ToDo)
+    Repo.all(from t in ToDo, order_by: [asc: t.updated_at])
   end
 
   @doc """
