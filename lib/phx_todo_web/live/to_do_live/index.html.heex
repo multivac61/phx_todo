@@ -13,7 +13,13 @@
   row_click={fn {_id, to_do} -> JS.navigate(~p"/#{to_do}") end}
 >
   <:col :let={{_id, to_do}} label="Name">{to_do.name}</:col>
-  <:col :let={{_id, to_do}} label="Done">{to_do.done}</:col>
+  <:col :let={{_id, to_do}} label="Done">
+    <p :if={to_do.done}>✅</p>
+    <p :if={!to_do.done}>📋</p>
+  </:col>
+  <:col :let={{_id, to_do}} label="Updated">
+    {to_do.updated_at |> last_update()}
+  </:col>
   <:action :let={{_id, to_do}}>
     <div class="sr-only">
       <.link navigate={~p"/#{to_do}"}>Show</.link>

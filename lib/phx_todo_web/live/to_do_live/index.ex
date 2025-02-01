@@ -1,5 +1,6 @@
 defmodule PhxTodoWeb.ToDoLive.Index do
   use PhxTodoWeb, :live_view
+  import PhxTodoWeb.LiveHelpers
 
   alias PhxTodo.ToDos
   alias PhxTodo.ToDos.ToDo
