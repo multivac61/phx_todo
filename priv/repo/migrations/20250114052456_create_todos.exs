@@ -8,5 +8,9 @@ defmodule PhxTodo.Repo.Migrations.CreateTodos do
 
       timestamps(type: :utc_datetime)
     end
+
+    # Move indexes outside the table block
+    create index(:todos, [:inserted_at])
+    create index(:todos, [:updated_at])
   end
 end

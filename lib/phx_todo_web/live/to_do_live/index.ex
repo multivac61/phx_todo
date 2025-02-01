@@ -43,22 +43,26 @@ defmodule PhxTodoWeb.ToDoLive.Index do
     {:noreply, stream_insert(socket, :todos, to_do)}
   end
 
+  def handle_info({{ToDo, :deleted}, %{id: id}}, socket) do
+    socket = stream_delete_by_dom_id(socket, :todos, "todos-#{id}")
+
+    {:noreply, socket}
+  end
+
   def handle_info({{ToDo, :inserted}, %{id: id}}, socket) do
     to_do = ToDos.get_to_do!(id)
     socket = stream_insert(socket, :todos, to_do)
-
     {:noreply, socket}
   end
 
   def handle_info({{ToDo, :updated}, %{id: id}}, socket) do
     to_do = ToDos.get_to_do!(id)
+
+    # Remove the existing todo from the stream
+    socket = stream_delete(socket, :todos, to_do)
+
+    # Reinsert the updated todo at the end of the stream
     socket = stream_insert(socket, :todos, to_do)
-
-    {:noreply, socket}
-  end
-
-  def handle_info({{ToDo, :deleted}, %{id: id}}, socket) do
-    socket = stream_delete_by_dom_id(socket, :todos, "todos-#{id}")
 
     {:noreply, socket}
   end
